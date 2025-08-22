@@ -1,64 +1,73 @@
-# Newton Raphson Power Injection Method
+# Newton Raphson Current Injection Method
 
-This repository contains implementations of the **Newton Raphson Power Injection** method for performing power flow analysis on distribution or transmission systems in both MATLAB and Python. The code is versatile and can be used for any system model, provided that the input data adheres to the specified format.
+This repository contains implementations of the **Newton Raphson Current Injection Method** for performing power flow analysis on distribution or transmission networks, provided in both MATLAB and Python. This method is designed to solve power flow equations by iteratively updating the bus voltage based on current injections, making it particularly suitable for systems with varying voltage levels across buses.
 
 ## Overview
 
-The main function for this method computes the voltage profile of buses in a radial or mesh distribution system. It requires two primary inputs: load data and line data. The load data should specify the bus index along with the real and reactive power for each bus, while the line data should include information on the resistance and reactance of the lines connecting the buses.
+The Newton Raphson Current Injection Method calculates the bus voltages of a distribution network by considering both real and reactive current injections at each bus. The method converges iteratively by updating the voltage at each bus until the difference between successive iterations meets the specified tolerance level.
 
-### Functionality
+### Scope and Conditions
+
+The method is applicable to radial or meshed distribution systems and requires specific conditions:
+- **Convergence Tolerance**: The method will continue iterating until the mismatch in current injections is less than the defined tolerance. This ensures the stability and accuracy of the results.
+- **Maximum Iterations**: To prevent excessive computation, a maximum number of iterations can be set, after which the algorithm will stop, indicating if convergence was not achieved.
+- **Slack Bus Voltage**: The slack bus acts as a reference with a fixed voltage (typically set to 1 p.u.), while other buses are initialized at 1 p.u. for both real and imaginary parts of the voltage.
+
+## Functionality
 
 The function includes the following features:
-- **Data Input Requirements**: 
-  - The load data must be structured such that it has three columns: bus index, real power (P), and reactive power (Q).
-  - The line data must have four columns: sending bus index, receiving bus index, resistance (R), and reactance (X).
+- **Data Input Requirements**:
+  - The **Load Data** must have three columns: bus index, real power (P), and reactive power (Q).
+  - The **Line Data** should have four columns: sending bus index, receiving bus index, resistance (R), and reactance (X).
   
-- **Customizable Parameters**: Users can specify a constant slack bus voltage, a convergence tolerance for iteration, and a maximum number of iterations allowed for the calculations. Default values for these parameters are provided, which can be overridden when calling the function.
+- **Customizable Parameters**:
+  - **Slack Bus Voltage**: Fixed reference voltage, typically set at 1 p.u.
+  - **Convergence Tolerance**: Determines the stopping criterion for iterative updates based on current mismatch (default is `1E-6`).
+  - **Maximum Iterations**: Limits the number of iterations (default is 100).
 
-### Guidance for Use
+### Usage Guide
 
-1. **Input Format**: Ensure that the input data (i.e., load and line data) are formatted correctly:
-   - **Load Data**: 
+1. **Input Format**:
+   - **Load Data**:
      - Column 1: Bus index
-     - Column 2: Real power (P)
-     - Column 3: Reactive power (Q)
-   - **Line Data**: 
+     - Column 2: Real power (P) in MW
+     - Column 3: Reactive power (Q) in MVAR
+   - **Line Data**:
      - Column 1: Sending bus index
      - Column 2: Receiving bus index
-     - Column 3: Line resistance (R)
-     - Column 4: Line reactance (X)
+     - Column 3: Resistance (R) in Ohms
+     - Column 4: Reactance (X) in Ohms
 
-2. **Function Call**: To execute the function, you can provide the load and line data as arguments, along with optional parameters for slack bus voltage, tolerance, and maximum iterations. If you skip any of the optional parameters, the function will use the predefined default values.
-
-3. **Example Usage**: The prompt provides an example of how to call the function. For instance:
+2. **Function Call**:
+   - Use the load and line data with optional arguments for slack bus voltage, tolerance, and maximum iterations. Defaults apply if optional parameters are not provided.
    - **Python**:
      ```python
-     v, iteration = nrpi_method(load_data, line_data, slack_bus_voltage=1.5, tolerance=1e-4)
+     v, iteration = nrci_method(load_data, line_data, slack_bus_voltage=1.0, tolerance=1e-6, max_iterations=100)
      ```
    - **MATLAB**:
      ```matlab
-     [v, iteration] = nrpi_method(load_data, line_data, 1.5, 1e-4);
+     [v, iteration] = nrci_method(load_data, line_data, 1.0, 1e-6, 100);
      ```
 
-4. **Exiting the Function**: Users are prompted to press Enter to continue or type 'quit' to exit the function. This allows for flexibility in how users interact with the function.
+3. **Running the Function**:
+   - To exit the function after execution, the user may press Enter or type ‘quit’ to terminate.
 
 ### Expected Outputs
 
-Upon successful execution, the function returns the following outputs:
-- Voltage after each iteration
-- Number of iterations
-- Time taken for each iteration
-- Average time taken for all runs
-- Total active and reactive power loss
-- Substation active and reactive power
-- Graph of voltage magnitude and angle
-- Single line diagram of the system model
-- Graph of the relationship between maximum error and computational time
-- .csv and .txt file of the voltage profile
-
-This provides a comprehensive tool for conducting power flow analysis in distribution networks, supporting both MATLAB and Python users.
+Upon successful execution, the function provides:
+- **Voltage Profiles**: Final voltage magnitudes and angles for each bus after each iteration.
+- **Number of Iterations**: The iteration count until convergence.
+- **Timing Information**: Execution time per iteration and average time for the total computation.
+- **Power Loss**: Total active and reactive power losses.
+- **Visuals**: Graph of voltage magnitude and angle across buses, single line diagram of the network, and a graph of maximum error vs. computational time.
+- **Exported Data**: Output voltage profiles saved as `.csv` and `.txt` files.
 
 ## Files
 
-- `nrpi_method.py`: Python code for the Newton Raphson Power Injection Method for power flow analysis.
-- `nrpi_method.m`: MATLAB code for the Newton Raphson Power Injection Method for power flow analysis.
+- `nrci_method.py`: Python code for the Newton Raphson Current Injection Method for power flow analysis.
+- `nrci_method.m`: MATLAB code for the Newton Raphson Current Injection Method for power flow analysis.
+
+## References
+
+- D. Das, “Electrical Power System,” New Age International (P) Publisher, New Delhi, 2006.
+- Anamika Dubey and Sumit Paudyal (2023), “Distribution System Optimization to Manage Distributed Energy Resources (DERs) for Grid Services”, Foundations and Trends® in Electric Energy Systems: Vol. 6, No. 3-4, pp 120–264. DOI: 10.1561/3100000030.
